@@ -5,14 +5,22 @@ let mongoServer;
 
 beforeAll(async () => {
   process.env.JWT_SECRET = "test_secret";
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
+  // Try to use local MongoDB first
+  try {
+    await mongoose.connect('mongodb://127.0.0.1:27017/testdb');
+  } catch (error) {
+    // Fallback to in-memory server
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri);
+  }
 });
 
 afterAll(async () => {
   await mongoose.disconnect();
-  await mongoServer.stop();
+  if (mongoServer) {
+    await mongoServer.stop();
+  }
 });
 
 afterEach(async () => {
