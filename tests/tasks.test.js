@@ -4,8 +4,8 @@ import app from "../src/app.js";
 let token;
 let taskId;
 
-beforeAll(async () => {
-  // Register
+// set up a fresh user and token before each test to avoid database cleanup issues
+beforeEach(async () => {
   await request(app)
     .post("/api/auth/register")
     .send({
@@ -14,7 +14,6 @@ beforeAll(async () => {
       password: "123456"
     });
 
-  // Login
   const res = await request(app)
     .post("/api/auth/login")
     .send({

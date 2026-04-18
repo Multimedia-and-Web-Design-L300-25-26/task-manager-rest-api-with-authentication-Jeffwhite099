@@ -19,6 +19,15 @@ describe("Auth Routes", () => {
   });
 
   it("should login user and return token", async () => {
+    // First register the user
+    await request(app)
+      .post("/api/auth/register")
+      .send({
+        name: "Test User",
+        email: "test@example.com",
+        password: "123456"
+      });
+
     const res = await request(app)
       .post("/api/auth/login")
       .send({
